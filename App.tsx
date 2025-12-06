@@ -10,7 +10,9 @@ import {
   CheckCircle2,
   Music,
   Volume2,
-  VolumeX
+  VolumeX,
+  HelpCircle,
+  X
 } from 'lucide-react';
 
 const TIMER_DURATIONS = {
@@ -100,6 +102,7 @@ const App: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const [completedSessions, setCompletedSessions] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
 
   // Helper to format time
   const formatTime = (seconds: number) => {
@@ -155,6 +158,11 @@ const App: React.FC = () => {
     setSoundEnabled(!soundEnabled);
   };
 
+  const toggleHelp = () => {
+    if (soundEnabled) SoundEngine.playClick();
+    setShowHelp(!showHelp);
+  }
+
   // Dynamic Styles based on mode (Pastel / Pale colors)
   const getGradient = () => {
     switch (mode) {
@@ -185,6 +193,65 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#faf9f6] text-stone-800 font-sans selection:bg-rose-200 flex items-center justify-center p-4 sm:p-8">
       
+      {/* Help Modal */}
+      {showHelp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/20 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95 duration-200 border border-white/50">
+            <button 
+              onClick={toggleHelp} 
+              className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 p-2 rounded-full hover:bg-stone-100 transition-colors"
+            >
+              <X size={20} />
+            </button>
+            
+            <h2 className="text-2xl font-bold text-stone-800 mb-4 flex items-center gap-2">
+              <Brain className="text-rose-500" /> La Técnica Pomodoro
+            </h2>
+            
+            <p className="text-stone-600 mb-6 leading-relaxed">
+              Es un método de gestión de tiempo para mejorar tu productividad y reducir la fatiga mental.
+            </p>
+            
+            <ul className="space-y-4">
+              <li className="flex gap-4 items-start">
+                <div className="bg-rose-100 text-rose-600 p-2 rounded-xl mt-0.5">
+                  <Play size={18} fill="currentColor" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800">1. Enfócate</h3>
+                  <p className="text-sm text-stone-500">Trabaja sin distracciones durante <strong>25 minutos</strong>.</p>
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <div className="bg-teal-100 text-teal-600 p-2 rounded-xl mt-0.5">
+                  <Coffee size={18} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800">2. Descanso Corto</h3>
+                  <p className="text-sm text-stone-500">Toma un respiro de <strong>5 minutos</strong> para recargar energía.</p>
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <div className="bg-indigo-100 text-indigo-600 p-2 rounded-xl mt-0.5">
+                  <Armchair size={18} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800">3. Descanso Largo</h3>
+                  <p className="text-sm text-stone-500">Después de 4 sesiones, descansa <strong>15 minutos</strong>.</p>
+                </div>
+              </li>
+            </ul>
+
+            <button 
+              onClick={toggleHelp}
+              className="w-full mt-8 py-3 rounded-xl bg-stone-900 text-white font-medium hover:bg-stone-800 transition-colors shadow-lg shadow-stone-200"
+            >
+              ¡Entendido, vamos a trabajar!
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Container */}
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8">
         
@@ -197,16 +264,26 @@ const App: React.FC = () => {
               <h1 className="text-4xl font-bold tracking-tighter flex items-center gap-2 text-stone-900">
                 Tomate Tiempo
               </h1>
-              <p className="text-stone-500 text-sm">Organiza tu día. Encuentra tu ritmo.</p>
+              <p className="text-stone-500 text-sm hidden sm:block">Organiza tu día. Encuentra tu ritmo.</p>
             </div>
             
-            <button 
-              onClick={toggleSound}
-              className="p-3 rounded-full hover:bg-stone-200/50 text-stone-500 transition-colors"
-              title={soundEnabled ? "Desactivar sonidos" : "Activar sonidos"}
-            >
-              {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={toggleHelp}
+                className="flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300 hover:bg-stone-50 transition-all text-sm font-medium shadow-sm"
+              >
+                <HelpCircle size={16} />
+                <span className="hidden sm:inline">Conoce la técnica</span>
+              </button>
+
+              <button 
+                onClick={toggleSound}
+                className="p-2.5 rounded-full hover:bg-stone-200/50 text-stone-500 transition-colors"
+                title={soundEnabled ? "Desactivar sonidos" : "Activar sonidos"}
+              >
+                {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+              </button>
+            </div>
           </div>
 
           {/* Timer Card */}
